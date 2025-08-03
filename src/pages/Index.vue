@@ -45,11 +45,41 @@ onMounted(async ()=>{
 
 })
 
+/**
+ * 匹配用户
+ */
+const doMatch = async () => {
+  const num = 10;
+  const userListData = await myAxios.get('/user/match', {
+    params: {
+      num,
+    },
+  })
+      .then(function (response) {
+        console.log('/user/match succeed', response);
+        Toast.success( '请求成功');
+        return response?.data;
+      })
+      .catch(function (error) {
+        console.error('/user/recommend error', error);
+        Toast.fail( '请求失败' );
+      });
+
+  if (userListData) {
+    userListData.forEach(user => {
+      if (user.tags) {
+        user.tags = JSON.parse(user.tags);
+      }
+    });
+    userList.value = userListData;
+  }
+}
+
 </script>
 
 <template>
-
   <user-card-list :user-list="userList"/>
+  <van-button type="primary" @click="doMatch">匹配</van-button>
   <van-empty v-if="!userList||userList.length<1 " description="暂无"></van-empty>
 </template>
 
